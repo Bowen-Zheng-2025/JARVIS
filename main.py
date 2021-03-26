@@ -25,27 +25,31 @@ with sr.Microphone() as source:
 import pyttsx3
 engine = pyttsx3.init()
 
+timer = 0
+
 while True:
-    event = ques
-    if event in (None, 'Cancel'):
-        break
     try:
         wiki_res = wikipedia.summary(ques, sentences=2)
         wolfram_res = next(client.query(ques).results).text
         engine.say(wolfram_res)
-        sg.PopupNonBlocking("Wolfram Result: "+wolfram_res,"Wikipedia Result: "+wiki_res)
     except wikipedia.exceptions.DisambiguationError:
         wolfram_res = next(client.query(ques).results).text
         engine.say(wolfram_res)
-        sg.PopupNonBlocking(wolfram_res)
+        if timer == 1:
+            break
+        timer += 1
     except wikipedia.exceptions.PageError:
         wolfram_res = next(client.query(ques).results).text
         engine.say(wolfram_res)
-        sg.PopupNonBlocking(wolfram_res)
+        if timer == 1:
+            break
+        timer += 1
     except:
         wiki_res = wikipedia.summary(ques, sentences=2)
         engine.say(wiki_res)
-        sg.PopupNonBlocking(wiki_res)
+        if timer == 1:
+            break
+        timer += 1
 
     engine.runAndWait()
 
