@@ -1,5 +1,5 @@
-import kivy
 from kivy.app import App
+<<<<<<< Updated upstream
 from kivy.uix.widget import Widget
 from kivy.properties import ObjectProperty
 
