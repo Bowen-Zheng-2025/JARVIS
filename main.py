@@ -1,58 +1,29 @@
-import wolframalpha
-client = wolframalpha.Client("lilpumpsaysnopeeking")
-
-import wikipedia
-
-import PySimpleGUI as sg
-sg.theme('DarkBlue')
-layout =[[sg.Text('Enter a command'), sg.InputText()],[sg.Button('Ok'), sg.Button('Cancel')]]
-window = sg.Window('JARVIS', layout)
-
 import speech_recognition as sr
-
-list = []
-
-r = sr.Recognizer()
-with sr.Microphone() as source:
-    print("Speak Anything: ")
-    audio = r.listen(source)
-    try:
-        text = r.recognize_google(audio)
-        ques = "{}".format(text)
-    except:
-        print("Sorry could not recognize what you said")
-
 import pyttsx3
-engine = pyttsx3.init()
+import pywhatkit
 
-timer = 0
+listener = sr.Recognizer()
 
-while True:
+def take_command():
     try:
-        wiki_res = wikipedia.summary(ques, sentences=2)
-        wolfram_res = next(client.query(ques).results).text
-        engine.say(wolfram_res)
-    except wikipedia.exceptions.DisambiguationError:
-        wolfram_res = next(client.query(ques).results).text
-        engine.say(wolfram_res)
-        if timer == 1:
-            break
-        timer += 1
-    except wikipedia.exceptions.PageError:
-        wolfram_res = next(client.query(ques).results).text
-        engine.say(wolfram_res)
-        if timer == 1:
-            break
-        timer += 1
+        with sr.Microphone() as source:
+            print('Listening ...')
+            voice = listener.listen(source)
+            command = listener.recognize_google(voice)
+            command = command.lower()
+            if 'jarvis' in command:
+                command = command.replace('alexa', '')
+                print(command)
+
     except:
-        wiki_res = wikipedia.summary(ques, sentences=2)
-        engine.say(wiki_res)
-        if timer == 1:
-            break
-        timer += 1
+        pass
+    return command
 
-    engine.runAndWait()
+def run_jarvis():
+    command = take_command()
+    print(command)
+    if 'play' in command:
+        song = command.replace('play', '') # this replaces the word when you say it
+        pywhatkit.playonyt(song)
 
-    print (ques)
-
-window.close()
+run_jarvis()
